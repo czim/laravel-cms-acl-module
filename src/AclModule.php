@@ -1,6 +1,7 @@
 <?php
 namespace Czim\CmsAclModule;
 
+use Czim\CmsAclModule\Providers\CmsAclModuleServiceProvider;
 use Czim\CmsAclModule\Support\RouteBuilders\ApiRouteBuilder;
 use Czim\CmsAclModule\Support\RouteBuilders\WebRouteBuilder;
 use Czim\CmsCore\Contracts\Modules\Data\AclPresenceInterface;
@@ -49,7 +50,9 @@ class AclModule implements ModuleInterface
      */
     public function getServiceProviders()
     {
-        return [];
+        return [
+            CmsAclModuleServiceProvider::class,
+        ];
     }
 
     /**
