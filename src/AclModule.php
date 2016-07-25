@@ -2,6 +2,7 @@
 namespace Czim\CmsAclModule;
 
 use Czim\CmsAclModule\Support\RouteBuilders\ApiRouteBuilder;
+use Czim\CmsAclModule\Support\RouteBuilders\WebRouteBuilder;
 use Czim\CmsCore\Contracts\Modules\Data\AclPresenceInterface;
 use Czim\CmsCore\Contracts\Modules\Data\MenuPresenceInterface;
 use Czim\CmsCore\Contracts\Modules\ModuleInterface;
@@ -59,7 +60,20 @@ class AclModule implements ModuleInterface
      */
     public function buildWebRoutes(Router $router)
     {
-        // todo
+        $builder = new WebRouteBuilder();
+
+        $router->group(
+            [
+                'as'        => 'acl.',
+                'prefix'    => 'acl',
+                'namespace' => '\\Czim\\CmsAclModule\\Http\\Controllers',
+            ],
+            function (Router $router) use ($builder) {
+
+                $builder->buildUserRoutes($router);
+                $builder->buildRoleRoutes($router);
+            }
+        );
     }
 
     /**
@@ -80,8 +94,8 @@ class AclModule implements ModuleInterface
             ],
             function (Router $router) use ($builder) {
 
-                $builder->buildApiUserRoutes($router);
-                $builder->buildApiRoleRoutes($router);
+                $builder->buildUserRoutes($router);
+                $builder->buildRoleRoutes($router);
             }
         );
     }

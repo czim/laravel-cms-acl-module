@@ -3,7 +3,7 @@ namespace Czim\CmsAclModule\Support\RouteBuilders;
 
 use Illuminate\Routing\Router;
 
-class ApiRouteBuilder
+class WebRouteBuilder
 {
 
     /**
