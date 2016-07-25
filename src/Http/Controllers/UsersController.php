@@ -1,8 +1,8 @@
 <?php
 namespace Czim\CmsAclModule\Http\Controllers;
 
-use Czim\CmsAclModule\Http\Requests\Api\CreateUserRequest;
-use Czim\CmsAclModule\Http\Requests\Api\UpdateUserRequest;
+use Czim\CmsAclModule\Http\Requests\CreateUserRequest;
+use Czim\CmsAclModule\Http\Requests\UpdateUserRequest;
 
 class UsersController extends Controller
 {
@@ -18,9 +18,6 @@ class UsersController extends Controller
     }
 
     /**
-     * Nothing to show really, a role is just a slugged string.
-     * For now, returning the users that are assigned this role.
-     *
      * @param int $id
      * @return mixed
      */
@@ -31,6 +28,19 @@ class UsersController extends Controller
         }
 
         return $this->showResponse($user);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function create()
+    {
+        return view(
+            config('cms-acl-module.views.users.create'),
+            [
+                'roles' => $this->auth->getAllRoles(),
+            ]
+        );
     }
 
     /**
@@ -60,6 +70,25 @@ class UsersController extends Controller
         }
 
         return $this->createResponse($user);
+    }
+
+    /**
+     * @param int $id
+     * @return mixed
+     */
+    public function edit($id)
+    {
+        if ( ! ($user = $this->auth->getUserById($id))) {
+            abort(404, "User not found");
+        }
+
+        return view(
+            config('cms-acl-module.views.users.edit'),
+            [
+                'user'  => $user,
+                'roles' => $this->auth->getAllRoles(),
+            ]
+        );
     }
 
     /**
@@ -166,7 +195,7 @@ class UsersController extends Controller
     protected function createResponse($data)
     {
         return redirect()->route(
-            $this->core->prefixApiRoute('acl.users.show'),
+            $this->core->prefixRoute('acl.users.show'),
             [ $data['id'] ]
         );
     }
@@ -178,7 +207,7 @@ class UsersController extends Controller
     protected function updateResponse($data)
     {
         return redirect()->route(
-            $this->core->prefixApiRoute('acl.users.show'),
+            $this->core->prefixRoute('acl.users.show'),
             [ $data['id'] ]
         );
     }
@@ -189,7 +218,7 @@ class UsersController extends Controller
     protected function deleteResponse()
     {
         return redirect()->route(
-            $this->core->prefixApiRoute('acl.users.index')
+            $this->core->prefixRoute('acl.users.index')
         );
     }
 

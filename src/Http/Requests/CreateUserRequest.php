@@ -1,15 +1,15 @@
 <?php
-namespace Czim\CmsAclModule\Http\Requests\Api;
+namespace Czim\CmsAclModule\Http\Requests;
 
-use Czim\CmsAclModule\Http\Requests\Request;
-
-class UpdateUserRequest extends Request
+class CreateUserRequest extends Request
 {
 
     public function rules()
+
     {
         return [
-            'password'   => 'string',
+            'email'      => 'required|string',
+            'password'   => 'required|string',
             'first_name' => 'string',
             'last_name'  => 'string',
             'roles'      => 'array',

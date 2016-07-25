@@ -1,8 +1,8 @@
 <?php
 namespace Czim\CmsAclModule\Http\Controllers;
 
-use Czim\CmsAclModule\Http\Requests\Api\CreateRoleRequest;
-use Czim\CmsAclModule\Http\Requests\Api\UpdateRoleRequest;
+use Czim\CmsAclModule\Http\Requests\CreateRoleRequest;
+use Czim\CmsAclModule\Http\Requests\UpdateRoleRequest;
 
 class RolesController extends Controller
 {

@@ -1,19 +1,16 @@
 <?php
-namespace Czim\CmsAclModule\Http\Requests\Api;
+namespace Czim\CmsAclModule\Http\Requests;
 
-use Czim\CmsAclModule\Http\Requests\Request;
-
-class CreateRoleRequest extends Request
+class UpdateRoleRequest extends Request
 {
 
     public function rules()
     {
         return [
-            'key'           => 'required|string',
             'name'          => 'string',
             'permissions'   => 'array',
             'permissions.*' => 'string',
         ];
     }
-
+    
 }
