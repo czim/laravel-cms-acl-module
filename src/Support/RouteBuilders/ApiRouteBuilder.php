@@ -9,7 +9,27 @@ class ApiRouteBuilder
     /**
      * @param Router $router
      */
-    public function buildUserRoutes(Router $router)
+    public function buildRoutes(Router $router)
+    {
+        $router->group(
+            [
+                'as'        => 'acl.',
+                'prefix'    => 'acl',
+                'namespace' => '\\Czim\\CmsAclModule\\Http\\Controllers\\Api',
+            ],
+            function (Router $router)  {
+
+                $this->buildUserRoutes($router)
+                     ->buildRoleRoutes($router);
+            }
+        );
+    }
+
+    /**
+     * @param Router $router
+     * @return $this
+     */
+    protected function buildUserRoutes(Router $router)
     {
         $router->group(
             [
@@ -26,7 +46,7 @@ class ApiRouteBuilder
 
                 $router->post('/', [
                     'as'         => 'store',
-                    'middleware' => [cms_mw_permission('acl.users.store')],
+                    'middleware' => [cms_mw_permission('acl.users.create')],
                     'uses'       => 'UsersController@store',
                 ]);
 
@@ -37,23 +57,26 @@ class ApiRouteBuilder
 
                 $router->put('{key}', [
                     'as'         => 'update',
-                    'middleware' => [cms_mw_permission('acl.users.update')],
+                    'middleware' => [cms_mw_permission('acl.users.edit')],
                     'uses'       => 'UsersController@update',
                 ]);
 
                 $router->delete('{key}', [
                     'as'         => 'destroy',
-                    'middleware' => [cms_mw_permission('acl.users.destroy')],
+                    'middleware' => [cms_mw_permission('acl.users.delete')],
                     'uses'       => 'UsersController@destroy',
                 ]);
             }
         );
+
+        return $this;
     }
 
     /**
      * @param Router $router
+     * @return $this
      */
-    public function buildRoleRoutes(Router $router)
+    protected function buildRoleRoutes(Router $router)
     {
         $router->group(
             [
@@ -70,7 +93,7 @@ class ApiRouteBuilder
 
                 $router->post('/', [
                     'as'         => 'store',
-                    'middleware' => [cms_mw_permission('acl.roles.store')],
+                    'middleware' => [cms_mw_permission('acl.roles.create')],
                     'uses'       => 'RolesController@store',
                 ]);
 
@@ -81,17 +104,19 @@ class ApiRouteBuilder
 
                 $router->put('{key}', [
                     'as'         => 'update',
-                    'middleware' => [cms_mw_permission('acl.roles.update')],
+                    'middleware' => [cms_mw_permission('acl.roles.edit')],
                     'uses'       => 'RolesController@update',
                 ]);
 
                 $router->delete('{key}', [
                     'as'         => 'destroy',
-                    'middleware' => [cms_mw_permission('acl.roles.destroy')],
+                    'middleware' => [cms_mw_permission('acl.roles.delete')],
                     'uses'       => 'RolesController@destroy',
                 ]);
             }
         );
+
+        return $this;
     }
 
 }

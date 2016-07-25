@@ -4,6 +4,7 @@ namespace Czim\CmsAclModule;
 use Czim\CmsAclModule\Providers\CmsAclModuleServiceProvider;
 use Czim\CmsAclModule\Support\RouteBuilders\ApiRouteBuilder;
 use Czim\CmsAclModule\Support\RouteBuilders\WebRouteBuilder;
+use Czim\CmsCore\Contracts\Core\CoreInterface;
 use Czim\CmsCore\Contracts\Modules\Data\AclPresenceInterface;
 use Czim\CmsCore\Contracts\Modules\Data\MenuPresenceInterface;
 use Czim\CmsCore\Contracts\Modules\ModuleInterface;
@@ -11,6 +12,19 @@ use Illuminate\Routing\Router;
 
 class AclModule implements ModuleInterface
 {
+
+    /**
+     * @var CoreInterface
+     */
+    protected $core;
+
+    /**
+     * @param CoreInterface $core
+     */
+    public function __construct(CoreInterface $core)
+    {
+        $this->core = $core;
+    }
 
     /**
      * Returns unique identifying key for the module.
@@ -63,20 +77,7 @@ class AclModule implements ModuleInterface
      */
     public function buildWebRoutes(Router $router)
     {
-        $builder = new WebRouteBuilder();
-
-        $router->group(
-            [
-                'as'        => 'acl.',
-                'prefix'    => 'acl',
-                'namespace' => '\\Czim\\CmsAclModule\\Http\\Controllers',
-            ],
-            function (Router $router) use ($builder) {
-
-                $builder->buildUserRoutes($router);
-                $builder->buildRoleRoutes($router);
-            }
-        );
+        (new WebRouteBuilder())->buildRoutes($router);
     }
 
     /**
@@ -87,20 +88,7 @@ class AclModule implements ModuleInterface
      */
     public function buildApiRoutes(Router $router)
     {
-        $builder = new ApiRouteBuilder();
-
-        $router->group(
-            [
-                'as'        => 'acl.',
-                'prefix'    => 'acl',
-                'namespace' => '\\Czim\\CmsAclModule\\Http\\Controllers\\Api',
-            ],
-            function (Router $router) use ($builder) {
-
-                $builder->buildUserRoutes($router);
-                $builder->buildRoleRoutes($router);
-            }
-        );
+        (new ApiRouteBuilder())->buildRoutes($router);
     }
 
     /**
@@ -118,7 +106,28 @@ class AclModule implements ModuleInterface
      */
     public function getMenuPresence()
     {
-        // TODO: Implement getMenuPresence() method.
-        return null;
+        return [
+            'id'       => 'simple-acl',
+            'type'     => 'group',
+            'label'    => 'Access Control',
+            'children' => [
+                [
+                    'id'          => 'simple-acl-users',
+                    'type'        => 'action',
+                    'label'       => 'User List',
+                    'permissions' => 'acl.users.*',
+                    'action'      => $this->core->prefixRoute('acl.users.index'),
+                    'parameters'  => [],
+                ],
+                [
+                    'id'          => 'simple-acl-create-user',
+                    'type'        => 'action',
+                    'label'       => 'New User',
+                    'permissions' => 'acl.users.create',
+                    'action'      => $this->core->prefixRoute('acl.users.create'),
+                    'parameters'  => [],
+                ],
+            ]
+        ];
     }
 }
