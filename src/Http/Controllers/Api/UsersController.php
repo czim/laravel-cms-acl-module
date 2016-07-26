@@ -1,7 +1,9 @@
 <?php
 namespace Czim\CmsAclModule\Http\Controllers\Api;
 
+use Czim\CmsAclModule\Api\Transformers\UserTransformer;
 use Czim\CmsAclModule\Http\Controllers\UsersController as WebUsersController;
+use Czim\CmsCore\Api\Response\TransformContainer;
 
 class UsersController extends WebUsersController
 {
@@ -12,7 +14,9 @@ class UsersController extends WebUsersController
      */
     protected function indexResponse($data)
     {
-        return $this->core->api()->response($data);
+        return $this->core->api()->response(
+            $this->makeContainer($data)
+        );
     }
 
     /**
@@ -21,7 +25,9 @@ class UsersController extends WebUsersController
      */
     protected function showResponse($data)
     {
-        return $this->core->api()->response($data);
+        return $this->core->api()->response(
+            $this->makeContainer($data, false)
+        );
     }
 
     /**
@@ -30,7 +36,10 @@ class UsersController extends WebUsersController
      */
     protected function createResponse($data)
     {
-        return $this->core->api()->response($data, 201);
+        return $this->core->api()->response(
+            $this->makeContainer($data, false),
+            201
+        );
     }
 
     /**
@@ -39,7 +48,9 @@ class UsersController extends WebUsersController
      */
     protected function updateResponse($data)
     {
-        return $this->core->api()->response($data);
+        return $this->core->api()->response(
+            $this->makeContainer($data, false)
+        );
     }
 
     /**
@@ -50,4 +61,20 @@ class UsersController extends WebUsersController
         return $this->core->api()->response('OK');
     }
 
+
+    /**
+     * Wraps data in a transform container.
+     *
+     * @param array $data
+     * @param bool  $collection
+     * @return TransformContainer
+     */
+    protected function makeContainer($data, $collection = true)
+    {
+        return new TransformContainer([
+            'content'     => $data,
+            'transformer' => new UserTransformer,
+            'collection'  => $collection,
+        ]);
+    }
 }
