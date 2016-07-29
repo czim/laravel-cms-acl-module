@@ -114,7 +114,7 @@ class AclModule implements ModuleInterface
                 [
                     'id'          => 'simple-acl-users',
                     'type'        => 'action',
-                    'label'       => 'User List',
+                    'label'       => 'Users',
                     'permissions' => 'acl.users.*',
                     'action'      => $this->core->prefixRoute('acl.users.index'),
                     'parameters'  => [],
@@ -125,6 +125,22 @@ class AclModule implements ModuleInterface
                     'label'       => 'New User',
                     'permissions' => 'acl.users.create',
                     'action'      => $this->core->prefixRoute('acl.users.create'),
+                    'parameters'  => [],
+                ],
+                [
+                    'id'          => 'simple-acl-roles',
+                    'type'        => 'action',
+                    'label'       => 'Roles',
+                    'permissions' => 'acl.roles.*',
+                    'action'      => $this->core->prefixRoute('acl.roles.index'),
+                    'parameters'  => [],
+                ],
+                [
+                    'id'          => 'simple-acl-create-role',
+                    'type'        => 'action',
+                    'label'       => 'New Role',
+                    'permissions' => 'acl.roles.create',
+                    'action'      => $this->core->prefixRoute('acl.roles.create'),
                     'parameters'  => [],
                 ],
             ]
