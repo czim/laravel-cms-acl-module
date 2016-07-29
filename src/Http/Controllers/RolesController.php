@@ -29,6 +29,19 @@ class RolesController extends Controller
     }
 
     /**
+     * @return mixed
+     */
+    public function create()
+    {
+        return view(
+            config('cms-acl-module.views.roles.create'),
+            [
+                'permissions' => $this->auth->getAllPermissions(),
+            ]
+        );
+    }
+
+    /**
      * @param CreateRoleRequest $request
      * @return mixed
      */
@@ -50,6 +63,25 @@ class RolesController extends Controller
         }
 
         return $this->createResponse($this->getShowData($key));
+    }
+
+    /**
+     * @param int $key
+     * @return mixed
+     */
+    public function edit($key)
+    {
+        if ( ! $this->auth->roleExists($key)) {
+            abort(404, "Role not found");
+        }
+
+        return view(
+            config('cms-acl-module.views.roles.edit'),
+            [
+                'role'        => $this->auth->getRole($key),
+                'permissions' => $this->auth->getAllPermissions(),
+            ]
+        );
     }
 
     /**
@@ -138,8 +170,7 @@ class RolesController extends Controller
     protected function createResponse($data)
     {
         return redirect()->route(
-            $this->core->prefixApiRoute('acl.roles.show'),
-            [ $data['key'] ]
+            $this->core->prefixRoute('acl.roles.index')
         );
     }
 
@@ -150,8 +181,7 @@ class RolesController extends Controller
     protected function updateResponse($data)
     {
         return redirect()->route(
-            $this->core->prefixApiRoute('acl.roles.show'),
-            [ $data['key'] ]
+            $this->core->prefixRoute('acl.roles.index')
         );
     }
 
@@ -161,7 +191,7 @@ class RolesController extends Controller
     protected function deleteResponse()
     {
         return redirect()->route(
-            $this->core->prefixApiRoute('acl.roles.index')
+            $this->core->prefixRoute('acl.roles.index')
         );
     }
 
