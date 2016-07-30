@@ -211,11 +211,11 @@ class RolesController extends Controller
 
     /**
      * @param string $role
-     * @return array
+     * @return object
      */
     protected function decorateRole($role)
     {
-        return [
+        return (object) [
             'key'         => $role,
             'permissions' => $this->auth->getAllPermissionsForRole($role),
         ];

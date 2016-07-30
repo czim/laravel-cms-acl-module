@@ -7,18 +7,18 @@ class RoleTransformer extends TransformerAbstract
 {
 
     /**
-     * @param array $role
+     * @param object $role
      * @return array
      */
-    public function transform(array $role)
+    public function transform($role)
     {
         return [
-            'key'         => $role['key'],
-            'permissions' => $role['permissions'],
+            'key'         => $role->key,
+            'permissions' => $role->permissions,
             'links'   => [
                 [
                     'rel' => 'self',
-                    'uri' => cms()->apiRoute('acl.roles.show', [ $role['key'] ]),
+                    'uri' => cms()->apiRoute('acl.roles.show', [ $role->key ]),
                 ]
             ],
         ];
