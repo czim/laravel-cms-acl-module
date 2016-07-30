@@ -140,7 +140,7 @@ class RolesController extends Controller
     // ------------------------------------------------------------------------------
 
     /**
-     * @param $data
+     * @param mixed $data
      * @return mixed
      */
     protected function indexResponse($data)
@@ -152,7 +152,7 @@ class RolesController extends Controller
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      * @return mixed
      */
     protected function showResponse($data)
@@ -164,7 +164,7 @@ class RolesController extends Controller
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      * @return mixed
      */
     protected function createResponse($data)
@@ -175,7 +175,7 @@ class RolesController extends Controller
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      * @return mixed
      */
     protected function updateResponse($data)

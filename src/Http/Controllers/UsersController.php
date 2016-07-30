@@ -195,7 +195,7 @@ class UsersController extends Controller
     protected function createResponse($data)
     {
         return redirect()->route(
-            $this->core->prefixRoute('acl.users.show'),
+            $this->core->prefixRoute('acl.users.index'),
             [ $data['id'] ]
         );
     }
@@ -207,7 +207,7 @@ class UsersController extends Controller
     protected function updateResponse($data)
     {
         return redirect()->route(
-            $this->core->prefixRoute('acl.users.show'),
+            $this->core->prefixRoute('acl.users.index'),
             [ $data['id'] ]
         );
     }
