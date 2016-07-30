@@ -50,6 +50,16 @@ class AclModule implements ModuleInterface
     }
 
     /**
+     * Returns release/version number of module.
+     *
+     * @return string
+     */
+    public function getVersion()
+    {
+        return '0.0.1';
+    }
+
+    /**
      * Returns the FQN for a class mainly associated with this module.
      *
      * @return string|null
