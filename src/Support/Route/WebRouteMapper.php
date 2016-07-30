@@ -1,27 +1,26 @@
 <?php
-namespace Czim\CmsAclModule\Support\RouteBuilders;
+namespace Czim\CmsAclModule\Support\Route;
 
 use Illuminate\Routing\Router;
 
-class ApiRouteBuilder
+class WebRouteMapper
 {
 
     /**
      * @param Router $router
      */
-    public function buildRoutes(Router $router)
+    public function mapRoutes(Router $router)
     {
         $router->group(
             [
                 'as'        => 'acl.',
                 'prefix'    => 'acl',
-                'namespace' => '\\Czim\\CmsAclModule\\Http\\Controllers\\Api',
+                'namespace' => '\\Czim\\CmsAclModule\\Http\\Controllers',
             ],
             function (Router $router)  {
 
-                $this->buildUserRoutes($router)
-                     ->buildRoleRoutes($router)
-                     ->buildPermissionRoutes($router);
+                $this->mapUserRoutes($router)
+                     ->mapRoleRoutes($router);
             }
         );
     }
@@ -30,7 +29,7 @@ class ApiRouteBuilder
      * @param Router $router
      * @return $this
      */
-    protected function buildUserRoutes(Router $router)
+    protected function mapUserRoutes(Router $router)
     {
         $router->group(
             [
@@ -45,6 +44,12 @@ class ApiRouteBuilder
                     'uses' => 'UsersController@index',
                 ]);
 
+                $router->get('create', [
+                    'as'         => 'create',
+                    'middleware' => [cms_mw_permission('acl.users.create')],
+                    'uses'       => 'UsersController@create',
+                ]);
+
                 $router->post('/', [
                     'as'         => 'store',
                     'middleware' => [cms_mw_permission('acl.users.create')],
@@ -54,6 +59,12 @@ class ApiRouteBuilder
                 $router->get('/{key}', [
                     'as'   => 'show',
                     'uses' => 'UsersController@show',
+                ]);
+
+                $router->get('{key}/edit', [
+                    'as'         => 'edit',
+                    'middleware' => [cms_mw_permission('acl.users.edit')],
+                    'uses'       => 'UsersController@edit',
                 ]);
 
                 $router->put('{key}', [
@@ -77,7 +88,7 @@ class ApiRouteBuilder
      * @param Router $router
      * @return $this
      */
-    protected function buildRoleRoutes(Router $router)
+    protected function mapRoleRoutes(Router $router)
     {
         $router->group(
             [
@@ -92,6 +103,12 @@ class ApiRouteBuilder
                     'uses' => 'RolesController@index',
                 ]);
 
+                $router->get('create', [
+                    'as'         => 'create',
+                    'middleware' => [cms_mw_permission('acl.roles.create')],
+                    'uses'       => 'RolesController@create',
+                ]);
+
                 $router->post('/', [
                     'as'         => 'store',
                     'middleware' => [cms_mw_permission('acl.roles.create')],
@@ -101,6 +118,12 @@ class ApiRouteBuilder
                 $router->get('/{key}', [
                     'as'   => 'show',
                     'uses' => 'RolesController@show',
+                ]);
+
+                $router->get('{key}/edit', [
+                    'as'         => 'edit',
+                    'middleware' => [cms_mw_permission('acl.roles.edit')],
+                    'uses'       => 'RolesController@edit',
                 ]);
 
                 $router->put('{key}', [
@@ -113,40 +136,6 @@ class ApiRouteBuilder
                     'as'         => 'destroy',
                     'middleware' => [cms_mw_permission('acl.roles.delete')],
                     'uses'       => 'RolesController@destroy',
-                ]);
-            }
-        );
-
-        return $this;
-    }
-
-    /**
-     * @param Router $router
-     * @return $this
-     */
-    protected function buildPermissionRoutes(Router $router)
-    {
-        $router->group(
-            [
-                'as'         => 'permissions.',
-                'prefix'     => 'permissions',
-                'middleware' => [cms_mw_permission('acl.roles.*')],
-            ],
-            function (Router $router) {
-
-                $router->get('/', [
-                    'as'   => 'index',
-                    'uses' => 'PermissionsController@available',
-                ]);
-
-                $router->get('module/{key}', [
-                    'as'   => 'module',
-                    'uses' => 'PermissionsController@module',
-                ]);
-
-                $router->get('used', [
-                    'as'   => 'used',
-                    'uses' => 'PermissionsController@used',
                 ]);
             }
         );
