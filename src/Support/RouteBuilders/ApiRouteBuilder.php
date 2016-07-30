@@ -20,7 +20,8 @@ class ApiRouteBuilder
             function (Router $router)  {
 
                 $this->buildUserRoutes($router)
-                     ->buildRoleRoutes($router);
+                     ->buildRoleRoutes($router)
+                     ->buildPermissionRoutes($router);
             }
         );
     }
@@ -112,6 +113,40 @@ class ApiRouteBuilder
                     'as'         => 'destroy',
                     'middleware' => [cms_mw_permission('acl.roles.delete')],
                     'uses'       => 'RolesController@destroy',
+                ]);
+            }
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param Router $router
+     * @return $this
+     */
+    protected function buildPermissionRoutes(Router $router)
+    {
+        $router->group(
+            [
+                'as'         => 'permissions.',
+                'prefix'     => 'permissions',
+                'middleware' => [cms_mw_permission('acl.roles.*')],
+            ],
+            function (Router $router) {
+
+                $router->get('/', [
+                    'as'   => 'index',
+                    'uses' => 'PermissionsController@available',
+                ]);
+
+                $router->get('module/{key}', [
+                    'as'   => 'module',
+                    'uses' => 'PermissionsController@module',
+                ]);
+
+                $router->get('used', [
+                    'as'   => 'used',
+                    'uses' => 'PermissionsController@used',
                 ]);
             }
         );
