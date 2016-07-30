@@ -58,7 +58,7 @@ class RolesController extends WebRolesController
      */
     protected function deleteResponse()
     {
-        return $this->core->api()->response('OK');
+        return $this->core->api()->response('OK', 204);
     }
 
 
