@@ -13,7 +13,8 @@ class CmsAclModuleServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->registerConfig();
+        $this->registerConfig()
+             ->loadViews();
     }
 
 
@@ -25,6 +26,21 @@ class CmsAclModuleServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             realpath(dirname(__DIR__) . '/../config/cms-acl-module.php'),
             'cms-acl-module'
+        );
+
+        return $this;
+    }
+
+    /**
+     * Loads basic CMS ACL views.
+     *
+     * @return $this
+     */
+    protected function loadViews()
+    {
+        $this->loadViewsFrom(
+            realpath(dirname(__DIR__) . '/../resources/views'),
+            'cms-acl'
         );
 
         return $this;
