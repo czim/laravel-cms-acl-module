@@ -8,6 +8,8 @@ use Czim\CmsCore\Contracts\Core\CoreInterface;
 use Czim\CmsCore\Contracts\Modules\Data\AclPresenceInterface;
 use Czim\CmsCore\Contracts\Modules\Data\MenuPresenceInterface;
 use Czim\CmsCore\Contracts\Modules\ModuleInterface;
+use Czim\CmsCore\Support\Enums\AclPresenceType;
+use Czim\CmsCore\Support\Enums\MenuPresenceType;
 use Illuminate\Routing\Router;
 
 class AclModule implements ModuleInterface
@@ -96,7 +98,30 @@ class AclModule implements ModuleInterface
      */
     public function getAclPresence()
     {
-        return null;
+        return [
+            [
+                'id'          => 'simple-acl-roles',
+                'label'       => 'Managing roles',
+                'type'        => AclPresenceType::GROUP,
+                'permissions' => [
+                    'acl.roles.show',
+                    'acl.roles.create',
+                    'acl.roles.edit',
+                    'acl.roles.delete',
+                ],
+            ],
+            [
+                'id'          => 'simple-acl-users',
+                'label'       => 'Managing users',
+                'type'        => AclPresenceType::GROUP,
+                'permissions' => [
+                    'acl.users.show',
+                    'acl.users.create',
+                    'acl.users.edit',
+                    'acl.users.delete',
+                ],
+            ],
+        ];
     }
 
     /**
@@ -108,20 +133,20 @@ class AclModule implements ModuleInterface
     {
         return [
             'id'       => 'simple-acl',
-            'type'     => 'group',
+            'type'     => MenuPresenceType::GROUP,
             'label'    => 'Access Control',
             'children' => [
                 [
                     'id'          => 'simple-acl-users',
-                    'type'        => 'action',
+                    'type'        => MenuPresenceType::ACTION,
                     'label'       => 'Users',
-                    'permissions' => 'acl.users.*',
+                    'permissions' => 'acl.users.show',
                     'action'      => $this->core->prefixRoute('acl.users.index'),
                     'parameters'  => [],
                 ],
                 [
                     'id'          => 'simple-acl-create-user',
-                    'type'        => 'action',
+                    'type'        => MenuPresenceType::ACTION,
                     'label'       => 'New User',
                     'permissions' => 'acl.users.create',
                     'action'      => $this->core->prefixRoute('acl.users.create'),
@@ -129,18 +154,10 @@ class AclModule implements ModuleInterface
                 ],
                 [
                     'id'          => 'simple-acl-roles',
-                    'type'        => 'action',
+                    'type'        => MenuPresenceType::ACTION,
                     'label'       => 'Roles',
-                    'permissions' => 'acl.roles.*',
+                    'permissions' => 'acl.roles.show',
                     'action'      => $this->core->prefixRoute('acl.roles.index'),
-                    'parameters'  => [],
-                ],
-                [
-                    'id'          => 'simple-acl-create-role',
-                    'type'        => 'action',
-                    'label'       => 'New Role',
-                    'permissions' => 'acl.roles.create',
-                    'action'      => $this->core->prefixRoute('acl.roles.create'),
                     'parameters'  => [],
                 ],
             ]
