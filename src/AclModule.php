@@ -87,7 +87,7 @@ class AclModule implements ModuleInterface
      *
      * @param Router $router
      */
-    public function buildWebRoutes(Router $router)
+    public function mapWebRoutes(Router $router)
     {
         (new WebRouteBuilder())->buildRoutes($router);
     }
@@ -98,7 +98,7 @@ class AclModule implements ModuleInterface
      *
      * @param Router $router
      */
-    public function buildApiRoutes(Router $router)
+    public function mapApiRoutes(Router $router)
     {
         (new ApiRouteBuilder())->buildRoutes($router);
     }
