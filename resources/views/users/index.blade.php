@@ -33,11 +33,12 @@
 
                 <thead>
                     <tr>
-                        <th class="col-id">ID</th>
+                        <th class="col-id">#</th>
                         <th>Email</th>
                         <th>Roles</th>
                         <th class="col-date">Created</th>
                         <th class="col-date">Updated</th>
+                        <th>&nbsp;</th>
                     </tr>
                 </thead>
 
@@ -77,6 +78,16 @@
                                     {{ $user->updated_at->format('Y-m-d H:i') }}
                                 @endif
                             </td>
+                            <td>
+                                @if (cms_auth()->can('acl.users.delete'))
+                                    <div class="btn-group btn-group-xs pull-right" role="group">
+                                        <a class="btn btn-danger delete-record-action" href="#" role="button"
+                                           data-id="{{$user->id}}"
+                                           data-toggle="modal" data-target="#delete-user-modal"
+                                        >delete</a>
+                                    </div>
+                                @endif
+                            </td>
                         </tr>
 
                     @empty
@@ -89,4 +100,42 @@
         </div>
     </div>
 
+
+    <div id="delete-user-modal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title delete-modal-title">Delete User</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="text-danger">This action cannot be undone!</p>
+                </div>
+                <div class="modal-footer">
+                    <form class="delete-modal-form" method="post" data-url="{{ cms_route('acl.users.destroy', [ 'IDHERE' ]) }}" action="">
+                        {{ method_field('delete') }}
+                        {{ csrf_field() }}
+
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger delete-modal-button">Delete User</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
+
+
+@push('javascript-end')
+    <script>
+        $('.delete-record-action').click(function () {
+            var form = $('.delete-modal-form');
+            form.attr(
+                'action',
+                form.attr('data-url').replace('IDHERE', $(this).attr('data-id'))
+            );
+            $('.delete-modal-title').text('Delete User #' + $(this).attr('data-id'));
+        });
+    </script>
+@endpush
