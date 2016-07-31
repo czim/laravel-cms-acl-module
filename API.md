@@ -71,7 +71,7 @@ Create a new user, which may log in immediately after.
         }
                 
 + Response 201 (application/json)
-        
+   
         {
             "data": {
                 "id": 9,
@@ -97,17 +97,26 @@ Retrieves a single user.
 
 + Response 200 (application/json)
 
-        {
-            "data": {
-                "id": 4,
-                "email": "coen@pixelindustries.com",
-                "first_name": "Coen",
-                "last_name": "Zimmerman",
-                "roles": [
-                    "admin"
-                ]
+    + Attributes (object)
+        + id: 9 (number, required)
+        + email: someuser@somedomain.com (string) - Valid e-mail address
+        + first_name: Some (string)
+        + last_name: User (string)
+        + roles: admin,editor (array[string]) - A list of the roles currently assigned to the user
+
+    + Body
+    
+            {
+                "data": {
+                    "id": 4,
+                    "email": "coen@pixelindustries.com",
+                    "first_name": "Coen",
+                    "last_name": "Zimmerman",
+                    "roles": [
+                        "admin"
+                    ]
+                }
             }
-        }
 
 ### Update a user [PUT]
 
@@ -245,16 +254,21 @@ Retrieves a single role by its key.
 
 + Response 200 (application/json)
 
+    + Attributes (object)
+        + key: admin (string, required)
+        + permissions: acl.roles.show,acl.users.show (array[string]) - A list of the permissions that the role offers
 
-        {
-          "data": {
-            "key":"admin",
-            "permissions":[
-                "acl.users.show",
-                "acl.roles.show"
-            ]
-         }
-        }
+    + Body
+
+            {
+                "data": {
+                    "key":"admin",
+                    "permissions":[
+                        "acl.users.show",
+                        "acl.roles.show"
+                    ]
+                }
+            }
 
 ### Update a role [PUT]
 
