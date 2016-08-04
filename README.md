@@ -3,6 +3,12 @@
 Simple ACL module for the CMS.
 
 
+## API Documentation
+
+The documentation for the ACL module API endpoints: 
+https://czim.github.io/laravel-cms-acl-module
+
+
 ## Contributing
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
