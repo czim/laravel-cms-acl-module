@@ -1,6 +1,6 @@
 @extends(cms_config('views.layout'))
 
-@section('title', 'ACL - Edit Role: ' . $role->getSlug()))
+@section('title', 'ACL - Edit Role: ' . $role->getSlug())
 
 
 @section('breadcrumbs')
