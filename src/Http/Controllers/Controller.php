@@ -1,6 +1,7 @@
 <?php
 namespace Czim\CmsAclModule\Http\Controllers;
 
+use Czim\CmsAclModule\Contracts\PermissionRepositoryInterface;
 use Czim\CmsCore\Contracts\Auth\AuthenticatorInterface;
 use Czim\CmsCore\Contracts\Core\CoreInterface;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -22,13 +23,23 @@ abstract class Controller extends BaseController
     protected $auth;
 
     /**
-     * @param CoreInterface          $core
-     * @param AuthenticatorInterface $auth
+     * @var PermissionRepositoryInterface
      */
-    public function __construct(CoreInterface $core, AuthenticatorInterface $auth)
-    {
-        $this->core = $core;
-        $this->auth = $auth;
+    protected $permissions;
+
+    /**
+     * @param CoreInterface                 $core
+     * @param AuthenticatorInterface        $auth
+     * @param PermissionRepositoryInterface $permissions
+     */
+    public function __construct(
+        CoreInterface $core,
+        AuthenticatorInterface $auth,
+        PermissionRepositoryInterface $permissions
+    ) {
+        $this->core        = $core;
+        $this->auth        = $auth;
+        $this->permissions = $permissions;
     }
 
 }

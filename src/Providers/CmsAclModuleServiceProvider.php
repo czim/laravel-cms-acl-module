@@ -1,6 +1,8 @@
 <?php
 namespace Czim\CmsAclModule\Providers;
 
+use Czim\CmsAclModule\Contracts\PermissionRepositoryInterface;
+use Czim\CmsAclModule\Repositories\PermissionRepository;
 use Illuminate\Support\ServiceProvider;
 
 class CmsAclModuleServiceProvider extends ServiceProvider
@@ -14,6 +16,7 @@ class CmsAclModuleServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerConfig()
+             ->registerInterfaceBindings()
              ->loadViews();
     }
 
@@ -27,6 +30,16 @@ class CmsAclModuleServiceProvider extends ServiceProvider
             realpath(dirname(__DIR__) . '/../config/cms-acl-module.php'),
             'cms-acl-module'
         );
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function registerInterfaceBindings()
+    {
+        $this->app->singleton(PermissionRepositoryInterface::class, PermissionRepository::class);
 
         return $this;
     }
