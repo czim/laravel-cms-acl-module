@@ -51,7 +51,7 @@ class ApiRouteMapper
                     'uses'       => 'UsersController@store',
                 ]);
 
-                $router->get('/{key}', [
+                $router->get('{key}', [
                     'as'   => 'show',
                     'uses' => 'UsersController@show',
                 ]);
@@ -98,18 +98,18 @@ class ApiRouteMapper
                     'uses'       => 'RolesController@store',
                 ]);
 
-                $router->get('/{key}', [
+                $router->get('show/{key}', [
                     'as'   => 'show',
                     'uses' => 'RolesController@show',
                 ]);
 
-                $router->put('{key}', [
+                $router->put('edit/{key}', [
                     'as'         => 'update',
                     'middleware' => [cms_mw_permission('acl.roles.edit')],
                     'uses'       => 'RolesController@update',
                 ]);
 
-                $router->delete('{key}', [
+                $router->delete('delete/{key}', [
                     'as'         => 'destroy',
                     'middleware' => [cms_mw_permission('acl.roles.delete')],
                     'uses'       => 'RolesController@destroy',

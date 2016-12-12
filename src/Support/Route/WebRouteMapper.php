@@ -115,24 +115,24 @@ class WebRouteMapper
                     'uses'       => 'RolesController@store',
                 ]);
 
-                $router->get('/{key}', [
+                $router->get('show/{key}', [
                     'as'   => 'show',
                     'uses' => 'RolesController@show',
                 ]);
 
-                $router->get('{key}/edit', [
+                $router->get('edit/{key}', [
                     'as'         => 'edit',
                     'middleware' => [cms_mw_permission('acl.roles.edit')],
                     'uses'       => 'RolesController@edit',
                 ]);
 
-                $router->put('{key}', [
+                $router->put('edit/{key}', [
                     'as'         => 'update',
                     'middleware' => [cms_mw_permission('acl.roles.edit')],
                     'uses'       => 'RolesController@update',
                 ]);
 
-                $router->delete('{key}', [
+                $router->delete('delete/{key}', [
                     'as'         => 'destroy',
                     'middleware' => [cms_mw_permission('acl.roles.delete')],
                     'uses'       => 'RolesController@destroy',
