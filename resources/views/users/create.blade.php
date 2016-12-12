@@ -69,7 +69,9 @@
                 @if (isset($roles) && count($roles))
 
                     <div class="form-group row">
-                        <label class="control-label col-sm-2" for="input-roles">Roles</label>
+                        <label class="control-label col-sm-2" for="input-roles">
+                            {{ cms_trans('acl.users.form.roles') }}
+                        </label>
                         <div class="col-sm-10">
                             <select multiple name="roles[]" class="form-control" id="input-roles">
 
