@@ -1,7 +1,6 @@
 <?php
 namespace Czim\CmsAclModule;
 
-use Czim\CmsAclModule\Providers\CmsAclModuleServiceProvider;
 use Czim\CmsAclModule\Support\Route\ApiRouteMapper;
 use Czim\CmsAclModule\Support\Route\WebRouteMapper;
 use Czim\CmsCore\Contracts\Core\CoreInterface;

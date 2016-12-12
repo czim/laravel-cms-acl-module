@@ -234,7 +234,7 @@ class RolesController extends Controller
 
     /**
      * @param string $slug
-     * @return array
+     * @return object
      */
     protected function getShowData($slug)
     {

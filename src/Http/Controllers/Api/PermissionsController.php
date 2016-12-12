@@ -2,7 +2,6 @@
 namespace Czim\CmsAclModule\Http\Controllers\Api;
 
 use Czim\CmsAclModule\Api\Transformers\PermissionTransformer;
-use Czim\CmsAclModule\Api\Transformers\RoleTransformer;
 use Czim\CmsAuth\Http\Controllers\Controller;
 use Czim\CmsCore\Api\Response\TransformContainer;
 use Czim\CmsCore\Contracts\Core\CoreInterface;
