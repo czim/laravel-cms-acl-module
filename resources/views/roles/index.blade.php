@@ -1,12 +1,20 @@
 @extends(cms_config('views.layout'))
 
+<?php $title = cms_trans('acl.roles.index.title'); ?>
+
 @section('title', 'ACL - Roles')
 
 
 @section('breadcrumbs')
     <ol class="breadcrumb">
-        <li><a href="{{ cms_route(\Czim\CmsCore\Support\Enums\NamedRoute::HOME) }}">Home</a></li>
-        <li class="active">ACL: Role list</li>
+        <li>
+            <a href="{{ cms_route(\Czim\CmsCore\Support\Enums\NamedRoute::HOME) }}">
+                {{ ucfirst(cms_trans('common.home')) }}
+            </a>
+        </li>
+        <li class="active">
+            {{ $title }}
+        </li>
     </ol>
 @endsection
 
@@ -18,12 +26,14 @@
         <div class="btn-toolbar pull-right">
             <div class="btn-group">
                 @if (cms_auth()->can('acl.roles.create'))
-                    <a href="{{ cms_route('acl.roles.create') }}" class="btn btn-primary">New Role</a>
+                    <a href="{{ cms_route('acl.roles.create') }}" class="btn btn-primary">
+                        {{ ucfirst(cms_trans('models.button.new-record', [ 'name' => cms_trans('acl.roles.single') ])) }}
+                    </a>
                 @endif
             </div>
         </div>
 
-        <h1>Role list</h1>
+        <h1>{{ $title }}</h1>
     </div>
 
     <div class="row">
@@ -33,15 +43,15 @@
 
                 <thead>
                     <tr>
-                        <th>Key</th>
-                        <th>In use</th>
-                        <th>Permissions</th>
-                        <th>&nbsp;</th>
+                        <th class="column">{{ ucfirst(cms_trans('acl.roles.columns.key')) }}</th>
+                        <th class="column">{{ ucfirst(cms_trans('acl.roles.columns.in-use')) }}</th>
+                        <th class="column">{{ ucfirst(cms_trans('acl.roles.columns.permissions')) }}</th>
+                        <th class="column">&nbsp;</th>
                     </tr>
                 </thead>
 
                 <?php
-                    // set the user link route according to permissions
+                    // set the role link route according to permissions
                     $route = cms_auth()->can('acl.roles.edit') ? 'acl.roles.edit' : 'acl.roles.show';
                 ?>
 
@@ -49,30 +59,45 @@
                     @forelse ($roles as $role)
 
                         <tr>
-                            <td class="col-primary">
+                            <td class="column">
                                 <a href="{{ cms_route($route, [ $role->key ]) }}">
                                     {{ $role->key }}
                                 </a>
                             </td>
-                            <td>
+                            <td class="column column-center">
                                 @if (cms_auth()->roleInUse($role->key))
-                                    <span class="text-success">Yes</span>
+                                    <i class="fa fa-check text-success" title="{{ cms_trans('common.boolean.true') }}"></i>
                                 @else
-                                    <span class="text-muted">No</span>
+                                    <i class="fa fa-times text-muted" title="{{ cms_trans('common.boolean.false') }}"></i>
                                 @endif
                             </td>
                             <td>
                                 @if ($role->permissions && count($role->permissions))
-                                    {{ implode(', ', $role->permissions) }}
+                                    @if (count($role->permissions) > 5)
+                                        count($role->permissions) {{ cms_trans('acl.permissions') }}
+                                    @else
+                                        {{ implode(', ', $role->permissions) }}
+                                    @endif
+
                                 @endif
                             </td>
                             <td>
-                                @if (cms_auth()->can('acl.roles.delete') && ! cms_auth()->roleInUse($role->key))
-                                    <div class="btn-group btn-group-xs pull-right" role="group">
-                                        <a class="btn btn-danger delete-record-action" href="#" role="button"
-                                           data-id="{{$role->key}}"
-                                           data-toggle="modal" data-target="#delete-role-modal"
-                                        >delete</a>
+                                @if (cms_auth()->canAnyOf(['acl.roles.edit', 'acl.roles.delete']))
+                                    <div class="btn-group btn-group-xs record-actions pull-right tr-show-on-hover" role="group">
+
+                                        @if (cms_auth()->can('acl.roles.edit'))
+                                            <a class="btn btn-default edit-record-action" href="{{ cms_route($route, [ $role->key ]) }}" role="button"
+                                               title="{{ ucfirst(cms_trans('common.action.edit')) }}"
+                                            ><i class="fa fa-edit"></i></a>
+                                        @endif
+
+                                        @if (cms_auth()->can('acl.roles.delete'))
+                                            <a class="btn btn-danger delete-record-action" href="#" role="button"
+                                               data-id="{{ $role->key }}"
+                                               data-toggle="modal" data-target="#delete-role-modal"
+                                               title="{{ ucfirst(cms_trans('common.action.delete')) }}"
+                                            ><i class="fa fa-trash-o"></i></a>
+                                        @endif
                                     </div>
                                 @endif
                             </td>
@@ -93,19 +118,27 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title delete-modal-title">Delete Role</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="{{ ucfirst(cms_trans('common.action.close')) }}">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title delete-modal-title">
+                        {{ ucfirst(cms_trans('models.button.delete-record', [ 'name' => cms_trans('acl.roles.single') ])) }}
+                    </h4>
                 </div>
                 <div class="modal-body">
-                    <p class="text-danger">This action cannot be undone!</p>
+                    <p class="text-danger">{{ cms_trans('common.cannot-undo') }}</p>
                 </div>
                 <div class="modal-footer">
                     <form class="delete-modal-form" method="post" data-url="{{ cms_route('acl.roles.destroy', [ 'IDHERE' ]) }}" action="">
                         {{ method_field('delete') }}
                         {{ csrf_field() }}
 
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-danger delete-modal-button">Delete Role</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">
+                            {{ ucfirst(cms_trans('common.action.close')) }}
+                        </button>
+                        <button type="submit" class="btn btn-danger delete-modal-button">
+                            {{ ucfirst(cms_trans('common.action.delete')) }}
+                        </button>
                     </form>
                 </div>
             </div>
@@ -118,12 +151,17 @@
 @push('javascript-end')
 <script>
     $('.delete-record-action').click(function () {
+
         var form = $('.delete-modal-form');
+
         form.attr(
-                'action',
-                form.attr('data-url').replace('IDHERE', $(this).attr('data-id'))
+            'action',
+            form.attr('data-url').replace('IDHERE', $(this).attr('data-id'))
         );
-        $('.delete-modal-title').text('Delete Role: ' + $(this).attr('data-id'));
+
+        $('.delete-modal-title').text(
+            "{{ ucfirst(cms_trans('models.button.delete-record', [ 'name' => cms_trans('acl.roles.single') ])) }}: " + $(this).attr('data-id')
+        );
     });
 </script>
 @endpush
