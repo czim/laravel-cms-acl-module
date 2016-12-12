@@ -46,7 +46,7 @@
                         {{ cms_trans('acl.users.form.password-new') }}
                     </label>
                     <div class="col-sm-10">
-                        <input name="password" type="password" class="form-control" id="input-password" placeholder="Password">
+                        <input name="password" type="password" class="form-control" id="input-password">
                     </div>
                 </div>
                 <div class="form-group row">
