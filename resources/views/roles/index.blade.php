@@ -68,13 +68,13 @@
                                 @if (cms_auth()->roleInUse($role->key))
                                     <i class="fa fa-check text-success" title="{{ cms_trans('common.boolean.true') }}"></i>
                                 @else
-                                    <i class="fa fa-times text-muted" title="{{ cms_trans('common.boolean.false') }}"></i>
+                                    <i class="fa fa-times text-danger" title="{{ cms_trans('common.boolean.false') }}"></i>
                                 @endif
                             </td>
                             <td>
                                 @if ($role->permissions && count($role->permissions))
                                     @if (count($role->permissions) > 5)
-                                        count($role->permissions) {{ cms_trans('acl.permissions') }}
+                                        {{  count($role->permissions) }} {{ cms_trans('acl.permissions') }}
                                     @else
                                         {{ implode(', ', $role->permissions) }}
                                     @endif
@@ -91,7 +91,7 @@
                                             ><i class="fa fa-edit"></i></a>
                                         @endif
 
-                                        @if (cms_auth()->can('acl.roles.delete'))
+                                        @if (cms_auth()->can('acl.roles.delete') && ! cms_auth()->roleInUse($role->key))
                                             <a class="btn btn-danger delete-record-action" href="#" role="button"
                                                data-id="{{ $role->key }}"
                                                data-toggle="modal" data-target="#delete-role-modal"

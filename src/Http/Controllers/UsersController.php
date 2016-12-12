@@ -38,7 +38,8 @@ class UsersController extends Controller
         return view(
             config('cms-acl-module.views.users.create'),
             [
-                'roles' => $this->auth->getAllRoles(),
+                'create' => true,
+                'roles'  => $this->auth->getAllRoles(),
             ]
         );
     }
@@ -85,8 +86,9 @@ class UsersController extends Controller
         return view(
             config('cms-acl-module.views.users.edit'),
             [
-                'user'  => $user,
-                'roles' => $this->auth->getAllRoles(),
+                'create' => false,
+                'user'   => $user,
+                'roles'  => $this->auth->getAllRoles(),
             ]
         );
     }

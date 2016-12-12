@@ -1,6 +1,17 @@
 @extends(cms_config('views.layout'))
 
-<?php $title = ucfirst(cms_trans('common.action.edit')) . ' ' .  cms_trans('acl.roles.single') . ': ' . $role->getSlug(); ?>
+@if ($create)
+    <?php
+        $title      = ucfirst(cms_trans('models.button.new-record', [ 'name' => cms_trans('acl.roles.single') ]));
+        $formAction = cms_route('acl.roles.store')
+    ?>
+@else
+    <?php
+        $title      = ucfirst(cms_trans('common.action.edit')) . ' ' .  cms_trans('acl.roles.single') . ': ' . $role->getSlug();
+        $formAction = cms_route('acl.roles.update', [ $role->getSlug() ])
+    ?>
+@endif
+
 
 @section('title', $title)
 
@@ -29,16 +40,22 @@
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
 
-            <form method="post" class="model-form" action="{{ cms_route('acl.roles.update', [ $role->getSlug() ]) }}">
-                {{ method_field('put') }}
+            <form method="post" class="model-form" action="{{ $formAction }}">
+                @if ( ! $create)
+                    {{ method_field('put') }}
+                @endif
                 {{ csrf_field() }}
 
                 <div class="form-group row">
-                    <label class="control-label col-sm-2 required">
+                    <label class="control-label col-sm-2 required" @if ( ! $create) for="input-key" @endif>
                         {{ cms_trans('acl.roles.form.key') }}
                     </label>
                     <div class="col-sm-10">
-                        <p class="form-control-static">{{ $role->getSlug() }}</p>
+                        @if ($create)
+                            <input name="key" type="text" class="form-control" id="input-key" value="{{ old('key') }}" required="required">
+                        @else
+                            <p class="form-control-static">{{ $role->getSlug() }}</p>
+                        @endif
                     </div>
                 </div>
 
@@ -47,27 +64,80 @@
                         {{ cms_trans('acl.roles.form.name') }}
                     </label>
                     <div class="col-sm-10">
-                        <input name="name" type="text" class="form-control" id="input-name" value="{{ old('name', $role->name) }}">
+                        <input name="name" type="text" class="form-control" id="input-name" value="{{ old('name', $create ? null : $role->name) }}" required="required">
                     </div>
                 </div>
 
 
                 @if (isset($permissions) && count($permissions))
 
+                    <?php $currentPermissions = $create ? [] : $role->getAllPermissions(); ?>
+
                     <div class="form-group row">
+
                         <label class="control-label col-sm-2" for="input-permissions">
                             {{ cms_trans('acl.roles.form.permissions') }}
                         </label>
-                        <div class="col-sm-10">
-                            <select multiple name="permissions[]" class="form-control" id="input-permissions">
 
-                                @foreach ($permissions as $permission)
-                                    <option value="{{ $permission }}" @if (in_array($permission, $role->getAllPermissions())) selected="selected" @endif>
-                                        {{ $permission }}
-                                    </option>
-                                @endforeach
-                            </select>
+                        <div class="col-sm-10 multiselect-form-field">
+
+                            <div class="left-panel">
+
+                                <div class="panel-header">
+                                    <b>{{ cms_trans('acl.roles.form.available-permissions') }}</b>
+                                </div>
+
+                                <select name="ignore[]" id="input-permissions" class="form-control" size="20" multiple="multiple">
+
+                                    @foreach (array_diff($permissions, $currentPermissions) as $permission)
+                                        <option value="{{ $permission }}">
+                                            {{ $permission }}
+                                        </option>
+                                    @endforeach
+
+                                </select>
+                            </div>
+
+                            <div class="buttons-panel">
+
+                                <div class="panel-header">&nbsp;</div>
+
+                                <button type="button" id="input-permissions_rightAll" class="btn btn-block btn-primary"
+                                        title="{{ cms_trans('acl.roles.form.select-all-permissions') }}">
+                                    <i class="glyphicon glyphicon-forward"></i>
+                                </button>
+                                <button type="button" id="input-permissions_rightSelected" class="btn btn-block btn-primary"
+                                        title="{{ cms_trans('acl.roles.form.select-permissions') }}">
+                                    <i class="glyphicon glyphicon-chevron-right"></i>
+                                </button>
+                                <button type="button" id="input-permissions_leftSelected" class="btn btn-block btn-default"
+                                        title="{{ cms_trans('acl.roles.form.deselect-all-permissions') }}">
+                                    <i class="glyphicon glyphicon-chevron-left"></i>
+                                </button>
+                                <button type="button" id="input-permissions_leftAll" class="btn btn-block btn-default"
+                                        title="{{ cms_trans('acl.roles.form.deselect-permissions') }}">
+                                    <i class="glyphicon glyphicon-backward"></i>
+                                </button>
+                            </div>
+
+                            <div class="right-panel">
+
+                                <div class="panel-header">
+                                    <b>{{ cms_trans('acl.roles.form.current-permissions') }}</b>
+                                </div>
+
+                                <select name="permissions[]" id="input-permissions_to" class="form-control" size="20" multiple="multiple">
+
+                                    @foreach ($currentPermissions as $permission)
+                                        <option value="{{ $permission }}">
+                                            {{ $permission }}
+                                        </option>
+                                    @endforeach
+
+                                </select>
+                            </div>
                         </div>
+
                     </div>
 
                 @endif
@@ -87,7 +157,12 @@
                         <div class="btn-group pull-right" role="group" aria-label="save">
                             <button type="submit" class="btn btn-success edit-button-save">
                                 <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                                {{ ucfirst(cms_trans('common.action.save')) }}
+
+                                @if ($create)
+                                    {{ ucfirst(cms_trans('common.action.create')) }}
+                                @else
+                                    {{ ucfirst(cms_trans('common.action.save')) }}
+                                @endif
                             </button>
                         </div>
 
@@ -96,18 +171,20 @@
 
             </form>
 
-
-            @if ( ! cms_auth()->roleInUse($role->getSlug()))
-
-            <form method="post" action="{{ cms_route('acl.roles.destroy', [ $role->getSlug() ]) }}">
-                {{ method_field('delete') }}
-                {{ csrf_field() }}
-
-                <button type="submit" class="btn btn-danger">Delete Role</button>
-            </form>
-
-            @endif
-
         </div>
     </div>
+
 @endsection
+
+
+@push('javascript-end')
+    <script>
+        $(function() {
+            $('#input-permissions').multiselect({
+                'keepRenderingSort': true,
+                'submitAllLeft': false,
+                'submitAllRight': true
+            });
+        });
+    </script>
+@endpush

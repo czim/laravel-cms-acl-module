@@ -1,6 +1,16 @@
 @extends(cms_config('views.layout'))
 
-<?php $title = ucfirst(cms_trans('common.action.edit')) . ': ' . $user->email; ?>
+@if ($create)
+    <?php
+        $title      = ucfirst(cms_trans('models.button.new-record', [ 'name' => cms_trans('acl.users.single') ]));
+        $formAction = cms_route('acl.users.store')
+    ?>
+@else
+    <?php
+        $title      = ucfirst(cms_trans('common.action.edit')) . ': ' . $user->email;
+        $formAction = cms_route('acl.users.update', [ $user->id ])
+    ?>
+@endif
 
 @section('title', $title)
 
@@ -23,14 +33,19 @@
 @section('content')
 
     <div class="page-header">
-        <h1>{{ $title }} <small>#{{ $user->id }}</small></h1>
+        <h1>
+            {{ $title }}
+            @if ( ! $create) <small>#{{ $user->id }}</small> @endif
+        </h1>
     </div>
 
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
 
-            <form method="post" class="model-form" action="{{ cms_route('acl.users.update', [ $user->id ]) }}">
-                {{ method_field('put') }}
+            <form method="post" class="model-form" action="{{ $formAction }}">
+                @if ( ! $create)
+                    {{ method_field('put') }}
+                @endif
                 {{ csrf_field() }}
 
                 <div class="form-group row">
@@ -38,23 +53,40 @@
                         {{ cms_trans('acl.users.form.email') }}
                     </label>
                     <div class="col-sm-10">
-                        <p class="form-control-static">{{ $user->email }}</p>
+                        @if ($create)
+                            <input name="email" type="email" class="form-control" id="input-email" value="{{ old('email') }}" required="required">
+                        @else
+                            <p class="form-control-static">{{ $user->email }}</p>
+                        @endif
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label class="control-label col-sm-2" for="input-password">
-                        {{ cms_trans('acl.users.form.password-new') }}
-                    </label>
-                    <div class="col-sm-10">
-                        <input name="password" type="password" class="form-control" id="input-password">
+
+                @if ($create)
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2 required" for="input-password">
+                            {{ cms_trans('acl.users.form.password') }}
+                        </label>
+                        <div class="col-sm-10">
+                            <input name="password" type="password" class="form-control" id="input-password" required="required">
+                        </div>
                     </div>
-                </div>
+                @else
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="input-password">
+                            {{ cms_trans('acl.users.form.password-new') }}
+                        </label>
+                        <div class="col-sm-10">
+                            <input name="password" type="password" class="form-control" id="input-password">
+                        </div>
+                    </div>
+                @endif
+
                 <div class="form-group row">
                     <label class="control-label col-sm-2" for="input-first-name">
                         {{ cms_trans('acl.users.form.first-name') }}
                     </label>
                     <div class="col-sm-10">
-                        <input name="first_name" type="text" class="form-control" id="input-first-name" value="{{ old('first_name') ?: $user->first_name }}">
+                        <input name="first_name" type="text" class="form-control" id="input-first-name" value="{{ old('first_name', $create ? null : $user->first_name) }}">
                     </div>
                 </div>
                 <div class="form-group row">
@@ -62,26 +94,80 @@
                         {{ cms_trans('acl.users.form.last-name') }}
                     </label>
                     <div class="col-sm-10">
-                        <input name="last_name" type="text" class="form-control" id="input-last-name" value="{{ old('last_name') ?: $user->last_name }}">
+                        <input name="last_name" type="text" class="form-control" id="input-last-name" value="{{ old('last_name', $create ? null : $user->last_name) }}">
                     </div>
                 </div>
 
                 @if (isset($roles) && count($roles))
 
+                    <?php $currentRoles = $create ? [] : $user->all_roles; ?>
+
                     <div class="form-group row">
+
                         <label class="control-label col-sm-2" for="input-roles">
                             {{ cms_trans('acl.users.form.roles') }}
                         </label>
-                        <div class="col-sm-10">
-                            <select multiple name="roles[]" class="form-control" id="input-last-name">
 
-                                @foreach ($roles as $role)
-                                    <option value="{{ $role }}" @if (in_array($role, $user->all_roles)) selected="selected" @endif>
-                                        {{ ucfirst(snake_case($role, ' ')) }}
-                                    </option>
-                                @endforeach
-                            </select>
+
+                        <div class="col-sm-10 multiselect-form-field">
+
+                            <div class="left-panel">
+
+                                <div class="panel-header">
+                                    <b>{{ cms_trans('acl.users.form.available-roles') }}</b>
+                                </div>
+
+                                <select name="ignore[]" id="input-roles" class="form-control" size="8" multiple="multiple">
+
+                                    @foreach (array_diff($roles, $currentRoles) as $role)
+                                        <option value="{{ $role }}">
+                                            {{ ucfirst(snake_case($role, ' ')) }}
+                                        </option>
+                                    @endforeach
+
+                                </select>
+                            </div>
+
+                            <div class="buttons-panel">
+
+                                <div class="panel-header">&nbsp;</div>
+
+                                <button type="button" id="input-roles_rightAll" class="btn btn-block btn-primary"
+                                        title="{{ cms_trans('acl.users.form.select-all-roles') }}">
+                                    <i class="glyphicon glyphicon-forward"></i>
+                                </button>
+                                <button type="button" id="input-roles_rightSelected" class="btn btn-block btn-primary"
+                                        title="{{ cms_trans('acl.users.form.select-roles') }}">
+                                    <i class="glyphicon glyphicon-chevron-right"></i>
+                                </button>
+                                <button type="button" id="input-roles_leftSelected" class="btn btn-block btn-default"
+                                        title="{{ cms_trans('acl.users.form.deselect-all-roles') }}">
+                                    <i class="glyphicon glyphicon-chevron-left"></i>
+                                </button>
+                                <button type="button" id="input-roles_leftAll" class="btn btn-block btn-default"
+                                        title="{{ cms_trans('acl.users.form.deselect-roles') }}">
+                                    <i class="glyphicon glyphicon-backward"></i>
+                                </button>
+                            </div>
+
+                            <div class="right-panel">
+
+                                <div class="panel-header">
+                                    <b>{{ cms_trans('acl.users.form.current-roles') }}</b>
+                                </div>
+
+                                <select name="roles[]" id="input-roles_to" class="form-control" size="8" multiple="multiple">
+
+                                    @foreach ($currentRoles as $role)
+                                        <option value="{{ $role }}">
+                                            {{ ucfirst(snake_case($role, ' ')) }}
+                                        </option>
+                                    @endforeach
+
+                                </select>
+                            </div>
                         </div>
+
                     </div>
 
                 @endif
@@ -113,3 +199,15 @@
         </div>
     </div>
 @endsection
+
+@push('javascript-end')
+    <script>
+        $(function() {
+            $('#input-roles').multiselect({
+                'keepRenderingSort': true,
+                'submitAllLeft': false,
+                'submitAllRight': true
+            });
+        });
+    </script>
+@endpush

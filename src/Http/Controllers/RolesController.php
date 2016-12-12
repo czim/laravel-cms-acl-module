@@ -36,6 +36,7 @@ class RolesController extends Controller
         return view(
             config('cms-acl-module.views.roles.create'),
             [
+                'create'      => true,
                 'permissions' => $this->permissions->getAll(),
             ]
         );
@@ -78,6 +79,7 @@ class RolesController extends Controller
         return view(
             config('cms-acl-module.views.roles.edit'),
             [
+                'create'      => false,
                 'role'        => $this->auth->getRole($key),
                 'permissions' => $this->permissions->getAll(),
             ]

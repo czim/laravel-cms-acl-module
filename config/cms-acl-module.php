@@ -29,7 +29,7 @@ return [
         'users' => [
             'index'  => 'cms-acl::users.index',
             'show'   => 'cms-acl::users.show',
-            'create' => 'cms-acl::users.create',
+            'create' => 'cms-acl::users.edit',
             'edit'   => 'cms-acl::users.edit',
             'delete' => 'cms-acl::users.delete',
         ],
@@ -37,7 +37,7 @@ return [
         'roles' => [
             'index'  => 'cms-acl::roles.index',
             'show'   => 'cms-acl::roles.show',
-            'create' => 'cms-acl::roles.create',
+            'create' => 'cms-acl::roles.edit',
             'edit'   => 'cms-acl::roles.edit',
             'delete' => 'cms-acl::roles.delete',
         ],
