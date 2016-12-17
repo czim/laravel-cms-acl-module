@@ -1,6 +1,8 @@
 <?php
 namespace Czim\CmsAclModule\Contracts;
 
+use Czim\CmsCore\Contracts\Modules\Data\AclPresenceInterface;
+
 interface PermissionRepositoryInterface
 {
 
@@ -12,10 +14,24 @@ interface PermissionRepositoryInterface
     public function getAll();
 
     /**
+     * Returns a list of all permissions currently assigned to roles and/or users.
+     *
+     * @return string[]
+     */
+    public function getAllInUse();
+
+    /**
      * Returns a list of custom defined permissions.
      *
      * @return string[]
      */
     public function getCustom();
+
+    /**
+     * Returns a grouped list of permissions.
+     *
+     * @return AclPresenceInterface[]
+     */
+    public function getGrouped();
 
 }
