@@ -46,7 +46,7 @@
                 @endif
                 {{ csrf_field() }}
 
-                <div class="form-group row">
+                <div class="form-group row @if ($errors->has('key')) has-error @endif">
                     <label class="control-label col-sm-2 required" @if ( ! $create) for="input-key" @endif>
                         {{ cms_trans('acl.roles.form.key') }}
                     </label>
@@ -59,7 +59,7 @@
                     </div>
                 </div>
 
-                <div class="form-group row">
+                <div class="form-group row @if ($errors->has('name')) has-error @endif">
                     <label class="control-label col-sm-2 required" for="input-name">
                         {{ cms_trans('acl.roles.form.name') }}
                     </label>
@@ -73,7 +73,7 @@
 
                     <?php $currentPermissions = $create ? [] : $role->getAllPermissions(); ?>
 
-                    <div class="form-group row">
+                    <div class="form-group row @if ($errors->has('permissions')) has-error @endif">
 
                         <label class="control-label col-sm-2" for="input-permissions">
                             {{ cms_trans('acl.roles.form.permissions') }}

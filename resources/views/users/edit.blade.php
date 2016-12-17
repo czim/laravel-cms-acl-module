@@ -48,7 +48,7 @@
                 @endif
                 {{ csrf_field() }}
 
-                <div class="form-group row">
+                <div class="form-group row @if ($errors->has('email')) has-error @endif">
                     <label class="control-label col-sm-2 required" for="input-email">
                         {{ cms_trans('acl.users.form.email') }}
                     </label>
@@ -62,7 +62,7 @@
                 </div>
 
                 @if ($create)
-                    <div class="form-group row">
+                    <div class="form-group row @if ($errors->has('password')) has-error @endif">
                         <label class="control-label col-sm-2 required" for="input-password">
                             {{ cms_trans('acl.users.form.password') }}
                         </label>
@@ -71,7 +71,7 @@
                         </div>
                     </div>
                 @else
-                    <div class="form-group row">
+                    <div class="form-group row @if ($errors->has('password')) has-error @endif">
                         <label class="control-label col-sm-2" for="input-password">
                             {{ cms_trans('acl.users.form.password-new') }}
                         </label>
@@ -81,7 +81,7 @@
                     </div>
                 @endif
 
-                <div class="form-group row">
+                <div class="form-group row @if ($errors->has('first_name')) has-error @endif">
                     <label class="control-label col-sm-2" for="input-first-name">
                         {{ cms_trans('acl.users.form.first-name') }}
                     </label>
@@ -89,7 +89,7 @@
                         <input name="first_name" type="text" class="form-control" id="input-first-name" value="{{ old('first_name', $create ? null : $user->first_name) }}">
                     </div>
                 </div>
-                <div class="form-group row">
+                <div class="form-group row @if ($errors->has('last_name')) has-error @endif">
                     <label class="control-label col-sm-2" for="input-last-name">
                         {{ cms_trans('acl.users.form.last-name') }}
                     </label>
@@ -102,7 +102,7 @@
 
                     <?php $currentRoles = $create ? [] : $user->all_roles; ?>
 
-                    <div class="form-group row">
+                    <div class="form-group row @if ($errors->has('roles')) has-error @endif">
 
                         <label class="control-label col-sm-2" for="input-roles">
                             {{ cms_trans('acl.users.form.roles') }}
