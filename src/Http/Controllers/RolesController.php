@@ -3,6 +3,7 @@ namespace Czim\CmsAclModule\Http\Controllers;
 
 use Czim\CmsAclModule\Http\Requests\CreateRoleRequest;
 use Czim\CmsAclModule\Http\Requests\UpdateRoleRequest;
+use Czim\CmsCore\Contracts\Modules\Data\AclPresenceInterface;
 
 class RolesController extends Controller
 {
@@ -33,11 +34,15 @@ class RolesController extends Controller
      */
     public function create()
     {
+        $grouped = $this->permissions->getGrouped();
+
         return view(
             config('cms-acl-module.views.roles.create'),
             [
                 'create'      => true,
                 'permissions' => $this->permissions->getAll(),
+                'grouped'     => $grouped,
+                'groupIndex'  => $this->getPermissionGroupIndex($grouped),
             ]
         );
     }
@@ -76,12 +81,17 @@ class RolesController extends Controller
             abort(404, "Role not found");
         }
 
+        $role    = $this->auth->getRole($key);
+        $grouped = $this->permissions->getGrouped();
+
         return view(
             config('cms-acl-module.views.roles.edit'),
             [
                 'create'      => false,
-                'role'        => $this->auth->getRole($key),
+                'role'        => $role,
                 'permissions' => $this->permissions->getAll(),
+                'grouped'     => $grouped,
+                'groupIndex'  => $this->getPermissionGroupIndex($grouped),
             ]
         );
     }
@@ -242,4 +252,35 @@ class RolesController extends Controller
     {
         return $this->decorateRole($slug);
     }
+
+    /**
+     * Returns an index for the group for each permission.
+     *
+     * @param AclPresenceInterface[] $groups
+     * @return string[]     associative: keyed by permission slug
+     */
+    protected function getPermissionGroupIndex($groups)
+    {
+        $index = [];
+
+        foreach ($groups as $key => $presence) {
+
+            $permissions = $presence->permissions();
+
+            if ( ! $permissions) {
+                continue;
+            }
+
+            if ( ! is_array($permissions)) {
+                $permissions = [ $permissions ];
+            }
+
+            foreach ($permissions as $permission) {
+                $index[ $permission ] = $key;
+            }
+        }
+
+        return $index;
+    }
+
 }

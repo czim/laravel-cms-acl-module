@@ -71,7 +71,10 @@
 
                 @if (isset($permissions) && count($permissions))
 
-                    <?php $currentPermissions = $create ? [] : $role->getAllPermissions(); ?>
+                    <?php
+                        $currentPermissions = $create ? [] : old('permissions', $role->getAllPermissions());
+                        $unsetPermissions   = array_diff($permissions, $currentPermissions);
+                    ?>
 
                     <div class="form-group row @if ($errors->has('permissions')) has-error @endif">
 
@@ -89,11 +92,26 @@
 
                                 <select name="ignore[]" id="input-permissions" class="form-control" size="20" multiple="multiple">
 
-                                    @foreach (array_diff($permissions, $currentPermissions) as $permission)
-                                        <option value="{{ $permission }}">
-                                            {{ $permission }}
-                                        </option>
-                                    @endforeach
+                                    @if ($unsetPermissions)
+
+                                        @foreach ($grouped as $index => $group)
+
+                                            <?php
+                                                $matchedPermissions = array_intersect($group->permissions(), $unsetPermissions);
+                                            ?>
+
+                                            @continue ( ! count($matchedPermissions))
+
+                                            <optgroup label="{{ ucfirst($group->label()) }}">
+
+                                                @foreach ($matchedPermissions as $permission)
+                                                    <option value="{{ $permission }}">
+                                                        {{ $permission }}
+                                                    </option>
+                                                @endforeach
+                                            </optgroup>
+                                        @endforeach
+                                    @endif
 
                                 </select>
                             </div>
@@ -128,11 +146,26 @@
 
                                 <select name="permissions[]" id="input-permissions_to" class="form-control" size="20" multiple="multiple">
 
-                                    @foreach ($currentPermissions as $permission)
-                                        <option value="{{ $permission }}">
-                                            {{ $permission }}
-                                        </option>
-                                    @endforeach
+                                    @if ($currentPermissions)
+
+                                        @foreach ($grouped as $index => $group)
+
+                                            <?php
+                                            $matchedPermissions = array_intersect($group->permissions(), $currentPermissions);
+                                            ?>
+
+                                            @continue ( ! count($matchedPermissions))
+
+                                            <optgroup label="{{ ucfirst($group->label()) }}">
+
+                                                @foreach ($matchedPermissions as $permission)
+                                                    <option value="{{ $permission }}">
+                                                        {{ $permission }}
+                                                    </option>
+                                                @endforeach
+                                            </optgroup>
+                                        @endforeach
+                                    @endif
 
                                 </select>
                             </div>
@@ -181,9 +214,13 @@
     <script>
         $(function() {
             $('#input-permissions').multiselect({
-                'keepRenderingSort': true,
-                'submitAllLeft': false,
-                'submitAllRight': true
+                'keepRenderingSort' : true,
+                'submitAllLeft'     : false,
+                'submitAllRight'    : true,
+                'search': {
+                    'left'  : '<input type="text" name="q" class="form-control input-sm multiselect-search" placeholder="{{ ucfirst(cms_trans('common.search')) }} &hellip;" />',
+                    'right' : '<input type="text" name="q" class="form-control input-sm multiselect-search" placeholder="{{ ucfirst(cms_trans('common.search')) }} &hellip;" />'
+                }
             });
         });
     </script>
