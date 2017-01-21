@@ -2,6 +2,8 @@
 
 Simple ACL module for the CMS.
 
+To be used to with the [Laravel CMS Core](https://github.com/czim/laravel-cms-core).
+
 
 ## Installation
 
