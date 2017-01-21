@@ -39,7 +39,7 @@
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
 
-            <table class="table ">
+            <table class="table table-striped table-hover records-table">
 
                 <thead>
                     <tr>
@@ -58,20 +58,20 @@
                 <tbody>
                     @forelse ($roles as $role)
 
-                        <tr>
-                            <td class="column">
+                        <tr class="records-row" default-action-url="{{ cms_route($route, [ $role->key ]) }}">
+                            <td class="column default-action">
                                 <a href="{{ cms_route($route, [ $role->key ]) }}">
                                     {{ $role->key }}
                                 </a>
                             </td>
-                            <td class="column column-center">
+                            <td class="column column-center default-action">
                                 @if (cms_auth()->roleInUse($role->key))
                                     <i class="fa fa-check text-success" title="{{ cms_trans('common.boolean.true') }}"></i>
                                 @else
                                     <i class="fa fa-times text-danger" title="{{ cms_trans('common.boolean.false') }}"></i>
                                 @endif
                             </td>
-                            <td>
+                            <td class="default-action">
                                 @if ($role->permissions && count($role->permissions))
                                     @if (count($role->permissions) > 5)
                                         {{  count($role->permissions) }} {{ cms_trans('acl.permissions') }}
@@ -150,18 +150,26 @@
 
 @push('javascript-end')
 <script>
-    $('.delete-record-action').click(function () {
+    $(function() {
+        $('.delete-record-action').click(function () {
 
-        var form = $('.delete-modal-form');
+            var form = $('.delete-modal-form');
 
-        form.attr(
-            'action',
-            form.attr('data-url').replace('IDHERE', $(this).attr('data-id'))
-        );
+            form.attr(
+                'action',
+                form.attr('data-url').replace('IDHERE', $(this).attr('data-id'))
+            );
 
-        $('.delete-modal-title').text(
-            "{{ ucfirst(cms_trans('models.button.delete-record', [ 'name' => cms_trans('acl.roles.single') ])) }}: " + $(this).attr('data-id')
-        );
+            $('.delete-modal-title').text(
+                "{{ ucfirst(cms_trans('models.button.delete-record', [ 'name' => cms_trans('acl.roles.single') ])) }}: " + $(this).attr('data-id')
+            );
+        });
+
+        @if (count($roles))
+            $('tr.records-row td.default-action').click(function () {
+                window.location.href = $(this).closest('tr').attr('default-action-url');
+            });
+        @endif
     });
 </script>
 @endpush

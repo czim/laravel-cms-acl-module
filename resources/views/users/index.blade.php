@@ -59,16 +59,17 @@
                     ?>
 
                     @forelse ($users as $user)
-                        <tr class="records-row">
-                            <td class="column primary-id column-right">
+
+                        <tr class="records-row" default-action-url="{{ cms_route($route, [ $user->id ]) }}">
+                            <td class="column primary-id column-right default-action">
                                 {{ $user->id }}
                             </td>
-                            <td class="column">
+                            <td class="column default-action">
                                 <a href="{{ cms_route($route, [ $user->id ]) }}">
                                     {{ $user->getUsername() }}
                                 </a>
                             </td>
-                            <td class="column">
+                            <td class="column default-action">
                                 @if ($user->all_roles && count($user->all_roles))
                                     {{ implode(', ', $user->all_roles) }}
                                     &nbsp;
@@ -78,12 +79,12 @@
                                     <span class="label label-primary">{{ cms_trans('common.admin') }}</span>
                                 @endif
                             </td>
-                            <td class="column column-center small">
+                            <td class="column column-center small default-action">
                                 @if ($user->created_at)
                                     {{ $user->created_at->format('Y-m-d H:i') }}
                                 @endif
                             </td>
-                            <td class="column column-center small">
+                            <td class="column column-center small default-action">
                                 @if ($user->updated_at)
                                     {{ $user->updated_at->format('Y-m-d H:i') }}
                                 @endif
@@ -157,18 +158,26 @@
 
 @push('javascript-end')
     <script>
-        $('.delete-record-action').click(function () {
+        $(function() {
+            $('.delete-record-action').click(function () {
 
-            var form = $('.delete-modal-form');
+                var form = $('.delete-modal-form');
 
-            form.attr(
-                'action',
-                form.attr('data-url').replace('IDHERE', $(this).attr('data-id'))
-            );
+                form.attr(
+                    'action',
+                    form.attr('data-url').replace('IDHERE', $(this).attr('data-id'))
+                );
 
-            $('.delete-modal-title').text(
-                "{{ ucfirst(cms_trans('models.button.delete-record', [ 'name' => cms_trans('acl.users.single') ])) }} #" + $(this).attr('data-id')
-            );
+                $('.delete-modal-title').text(
+                    "{{ ucfirst(cms_trans('models.button.delete-record', [ 'name' => cms_trans('acl.users.single') ])) }} #" + $(this).attr('data-id')
+                );
+            });
+
+            @if (count($users))
+                $('tr.records-row td.default-action').click(function () {
+                    window.location.href = $(this).closest('tr').attr('default-action-url');
+                });
+            @endif
         });
     </script>
 @endpush
