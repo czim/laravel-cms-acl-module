@@ -60,10 +60,9 @@ For instance:
             // The type must always be 'group'
             'type'        => 'group',
             // The label will be used for the multiselect optgroup
-            'label'       => 'some.translation.key',
-            // If translated is set to false, the label will be displayed as is,
-            // otherwise, it will passed through cms_trans()
-            'translated'  => true,
+            'label'            => 'Some Label',
+            // Translation key to use for a label for the optgroup. If this is set, the label value is ignored. 
+            'label_translated' => 'some.translation.key',
             // Permissions should always be a list of available permission slug strings
             'permissions' => [
                 'example.custom.permission',
