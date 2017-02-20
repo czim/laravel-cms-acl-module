@@ -58,7 +58,7 @@
                 <tbody>
                     @forelse ($roles as $role)
 
-                        <tr class="records-row" default-action-url="{{ cms_route($route, [ $role->key ]) }}">
+                        <tr class="records-row" data-id="{{ $role->key }}" data-reference="{{ $role->key }}" data-default-action-url="{{ cms_route($route, [ $role->key ]) }}">
                             <td class="column default-action">
                                 <a href="{{ cms_route($route, [ $role->key ]) }}">
                                     {{ $role->key }}
@@ -93,7 +93,6 @@
 
                                         @if (cms_auth()->can('acl.roles.delete') && ! cms_auth()->roleInUse($role->key))
                                             <a class="btn btn-danger delete-record-action" href="#" role="button"
-                                               data-id="{{ $role->key }}"
                                                data-toggle="modal" data-target="#delete-role-modal"
                                                title="{{ ucfirst(cms_trans('common.action.delete')) }}"
                                             ><i class="fa fa-trash-o"></i></a>
@@ -153,21 +152,29 @@
     $(function() {
         $('.delete-record-action').click(function () {
 
-            var form = $('.delete-modal-form');
+            var form      = $('.delete-modal-form'),
+                row       = $(this).closest('tr');
+
+            var id        = row.attr('data-id'),
+                reference = row.attr('data-reference').trim();
+
+            if ( ! reference || ! reference.length) {
+                reference = '#' + id;
+            }
 
             form.attr(
                 'action',
-                form.attr('data-url').replace('IDHERE', $(this).attr('data-id'))
+                form.attr('data-url').replace('IDHERE', id)
             );
 
             $('.delete-modal-title').text(
-                "{{ ucfirst(cms_trans('models.button.delete-record', [ 'name' => cms_trans('acl.roles.single') ])) }}: " + $(this).attr('data-id')
+                "{{ ucfirst(cms_trans('models.button.delete-record', [ 'name' => cms_trans('acl.roles.single') ])) }}: " + reference
             );
         });
 
         @if (count($roles))
             $('tr.records-row td.default-action').click(function () {
-                window.location.href = $(this).closest('tr').attr('default-action-url');
+                window.location.href = $(this).closest('tr').attr('data-default-action-url');
             });
         @endif
     });
