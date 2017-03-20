@@ -3,6 +3,7 @@ namespace Czim\CmsAclModule\Http\Controllers;
 
 use Czim\CmsAclModule\Http\Requests\CreateUserRequest;
 use Czim\CmsAclModule\Http\Requests\UpdateUserRequest;
+use Czim\CmsCore\Support\Enums\FlashLevel;
 
 class UsersController extends Controller
 {
@@ -69,6 +70,14 @@ class UsersController extends Controller
         if ( ! $this->auth->assign($request->input('roles', []), $user)) {
             abort(500, 'User created, but failed to assign roles');
         }
+
+        cms_flash(
+            cms_trans(
+                'acl.users.flash.success-message-create',
+                [ 'record' => $user->getUsername() ]
+            ),
+            FlashLevel::SUCCESS
+        );
 
         return $this->createResponse($user);
     }
@@ -137,6 +146,14 @@ class UsersController extends Controller
         // Get fresh data
         $user = $this->auth->getUserById($id);
 
+        cms_flash(
+            cms_trans(
+                'acl.users.flash.success-message-edit',
+                [ 'record' => $user->getUsername() ]
+            ),
+            FlashLevel::SUCCESS
+        );
+
         return $this->updateResponse($user);
     }
 
@@ -157,6 +174,14 @@ class UsersController extends Controller
         if ( ! $this->auth->deleteUser($user->getUsername())) {
             abort(500, 'Failed to delete user');
         }
+
+        cms_flash(
+            cms_trans(
+                'acl.users.flash.success-message-delete',
+                [ 'record' => $user->getUsername() ]
+            ),
+            FlashLevel::SUCCESS
+        );
 
         return $this->deleteResponse();
     }

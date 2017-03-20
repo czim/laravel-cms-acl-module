@@ -4,6 +4,7 @@ namespace Czim\CmsAclModule\Http\Controllers;
 use Czim\CmsAclModule\Http\Requests\CreateRoleRequest;
 use Czim\CmsAclModule\Http\Requests\UpdateRoleRequest;
 use Czim\CmsCore\Contracts\Modules\Data\AclPresenceInterface;
+use Czim\CmsCore\Support\Enums\FlashLevel;
 
 class RolesController extends Controller
 {
@@ -68,6 +69,14 @@ class RolesController extends Controller
             abort(500, 'Role created, but failed to grant permissions');
         }
 
+        cms_flash(
+            cms_trans(
+                'acl.roles.flash.success-message-create',
+                [ 'record' => $key ]
+            ),
+            FlashLevel::SUCCESS
+        );
+
         return $this->createResponse($this->getShowData($key));
     }
 
@@ -123,6 +132,14 @@ class RolesController extends Controller
             }
         }
 
+        cms_flash(
+            cms_trans(
+                'acl.roles.flash.success-message-edit',
+                [ 'record' => $key ]
+            ),
+            FlashLevel::SUCCESS
+        );
+
         return $this->updateResponse($this->getShowData($key));
     }
 
@@ -143,6 +160,14 @@ class RolesController extends Controller
         if ( ! $this->auth->removeRole($key)) {
             abort(500, 'Failed to remove role');
         }
+
+        cms_flash(
+            cms_trans(
+                'acl.roles.flash.success-message-delete',
+                [ 'record' => $key ]
+            ),
+            FlashLevel::SUCCESS
+        );
 
         return $this->deleteResponse();
     }
