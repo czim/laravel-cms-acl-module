@@ -200,7 +200,7 @@
     </div>
 @endsection
 
-@push('javascript-end')
+@cms_script
     <script>
         $(function() {
             $('#input-roles').multiselect({
@@ -210,4 +210,4 @@
             });
         });
     </script>
-@endpush
+@cms_endscript

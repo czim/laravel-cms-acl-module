@@ -210,7 +210,7 @@
 @endsection
 
 
-@push('javascript-end')
+@cms_script
     <script>
         $(function() {
             $('#input-permissions').multiselect({
@@ -224,4 +224,4 @@
             });
         });
     </script>
-@endpush
+@cms_endscript

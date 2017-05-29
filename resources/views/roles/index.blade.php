@@ -147,7 +147,7 @@
 @endsection
 
 
-@push('javascript-end')
+@cms_script
 <script>
     $(function() {
         $('.delete-record-action').click(function () {
@@ -179,4 +179,4 @@
         @endif
     });
 </script>
-@endpush
+@cms_endscript
