@@ -16,7 +16,7 @@ Add the module class to your `cms-modules.php` configuration file:
     ],
 ```
 
-Add the service provider to your `cms-core.php` configuration file:
+Add the service provider to your `cms-modules.php` configuration file:
 
 ``` php
     'providers' => [
