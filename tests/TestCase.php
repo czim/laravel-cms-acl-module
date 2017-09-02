@@ -2,7 +2,6 @@
 namespace Czim\CmsAclModule\Test;
 
 use Illuminate\Contracts\Foundation\Application;
-use Czim\CmsAuth\Sentinel\Users\EloquentUser;
 use Czim\CmsCore\Contracts\Auth\AuthenticatorInterface;
 use Czim\CmsCore\Providers\CmsCoreServiceProvider;
 use Czim\CmsCore\Support\Enums\Component;
@@ -15,8 +14,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     /**
      * Define environment setup.
      *
-     * @param  \Illuminate\Foundation\Application  $app
-     * @return void
+     * {@inheritdoc}
      */
     protected function getEnvironmentSetUp($app)
     {
