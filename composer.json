@@ -4,14 +4,15 @@
     "keywords": [ "cms", "laravel", "acl" ],
     "homepage": "https://github.com/czim",
     "require": {
-        "php": ">=5.5.9"
+        "php": ">=7.0.0"
     },
     "require-dev": {
-        "czim/laravel-cms-core": "~1.3",
-        "phpunit/phpunit": "4.*",
+        "czim/laravel-cms-core": "~1.5",
+        "phpunit/phpunit": "~6.0",
         "mockery/mockery": "0.9.*",
         "scrutinizer/ocular": "~1.1",
-        "orchestra/testbench": "~3.3.0"
+        "orchestra/testbench": "~3.5",
+        "orchestra/database": "~3.5"
     },
     "autoload": {
         "psr-4": {

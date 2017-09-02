@@ -6,6 +6,7 @@ use Czim\CmsAuth\Sentinel\Users\EloquentUser;
 use Czim\CmsCore\Contracts\Auth\AuthenticatorInterface;
 use Czim\CmsCore\Providers\CmsCoreServiceProvider;
 use Czim\CmsCore\Support\Enums\Component;
+use Orchestra\Database\ConsoleServiceProvider;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
@@ -69,6 +70,18 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         $this->mockBoundCoreExternalComponents($app);
 
         $app->register(CmsCoreServiceProvider::class);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getPackageProviders($app)
+    {
+        parent::getPackageProviders($app);
+
+        return [
+            ConsoleServiceProvider::class,
+        ];
     }
 
     /**
