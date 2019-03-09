@@ -1,6 +1,7 @@
 <?php
 namespace Czim\CmsAclModule\Test;
 
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
 use Czim\CmsCore\Contracts\Auth\AuthenticatorInterface;
 use Czim\CmsCore\Providers\CmsCoreServiceProvider;
@@ -18,19 +19,22 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
      */
     protected function getEnvironmentSetUp($app)
     {
+        /** @var Repository $config */
+        $config = $app['config'];
+
         // Setup default database to use sqlite :memory:
-        $app['config']->set('database.default', 'testbench');
-        $app['config']->set('database.connections.testbench', [
+        $config->set('database.default', 'testbench');
+        $config->set('database.connections.testbench', [
             'driver'   => 'sqlite',
             'database' => ':memory:',
             'prefix'   => '',
         ]);
 
         // Load the CMS even when unit testing
-        $app['config']->set('cms-core.testing', true);
+        $config->set('cms-core.testing', true);
 
         // Set up service providers for tests, excluding what is not part of this package
-        $app['config']->set('cms-core.providers', [
+        $config->set('cms-core.providers', [
             \Czim\CmsCore\Providers\ModuleManagerServiceProvider::class,
             \Czim\CmsCore\Providers\LogServiceProvider::class,
             \Czim\CmsCore\Providers\RouteServiceProvider::class,
@@ -44,10 +48,10 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             \Czim\CmsCore\Providers\Api\ApiRouteServiceProvider::class,
         ]);
 
-        $app['config']->set('cms-api.providers', []);
+        $config->set('cms-api.providers', []);
 
         // Mock component bindings in the config
-        $app['config']->set(
+        $config->set(
             'cms-core.bindings', [
                 Component::BOOTCHECKER => $this->getTestBootCheckerBinding(),
                 Component::CACHE       => \Czim\CmsCore\Core\Cache::class,
@@ -59,7 +63,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
                 Component::AUTH        => 'mock-cms-auth',
         ]);
 
-        $app['config']->set('cms-acl-module.permissions', [
+        $config->set('cms-acl-module.permissions', [
             'some.custom.permission',
             'another.custom.permission',
         ]);
@@ -74,7 +78,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
