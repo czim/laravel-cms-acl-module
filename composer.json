@@ -4,7 +4,7 @@
     "keywords": [ "cms", "laravel", "acl" ],
     "homepage": "https://github.com/czim",
     "require": {
-        "php": ">=5.5.9"
+        "php": ">=7.1.3"
     },
     "require-dev": {
         "czim/laravel-cms-core": "~1.3",
